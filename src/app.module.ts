@@ -6,6 +6,7 @@ import { BlogModule } from './blog/blog.module';
 import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose'
 import { ConfigModule } from '@nestjs/config'
+import { CommentsModule } from './comments/comments.module';
 import configuration from './config/config'
 
 const config = configuration()
@@ -20,7 +21,7 @@ const config = configuration()
       isGlobal: true
     }),
     MongooseModule.forRoot(config.mongoDB_URL),
-
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

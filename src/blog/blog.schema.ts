@@ -13,8 +13,14 @@ export class Blog extends Document{
    @Prop({required:true})
    content:string
 
-   @Prop({required:true,ref:'User',type:[{type:mongoose.Schema.Types.ObjectId}]})
+   @Prop({required:true,ref:'User',type:mongoose.Schema.Types.ObjectId})
    user:User
+
+//    @Prop()
+//    comments:string
+
+//    @Prop()
+//    likes:string
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog)

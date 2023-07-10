@@ -7,8 +7,10 @@ export enum UserType{
     ADMIN='admin'
 }
 
-@Schema({})
-export class User extends Document {
+export type UserDocument = User & Document;
+
+@Schema({timestamps:true})
+export class User {
    @Prop({})
    _id:Types.ObjectId
 
@@ -33,14 +35,20 @@ export class User extends Document {
    @Prop({required:true})
    password:string;
 
+   @Prop({require:false})
+   token?:string
+
    @Prop({enum:UserType,default:UserType.REGULAR})
    userType:UserType
 
-   @Prop({type:[{type:mongoose.Schema.Types.ObjectId}],ref:'User'})
+   @Prop({type:[{type:mongoose.Schema.Types.ObjectId}],ref:'User',required:false})
    blog:[Blog]
 
-   @Prop()
+   @Prop({required:false})
    phoneNumber:number
+
+   @Prop({default:false})
+   isVerified:boolean
 
 }
 
