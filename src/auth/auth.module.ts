@@ -12,7 +12,7 @@ const config = configuration()
 @Module({
   imports: [UserModule, JwtModule.register({
     global: true,
-    secret: config.SECRET,
+    secret: config.JWT_SECRET,
     signOptions: { expiresIn: '30d' }
   })],
   controllers: [AuthController],

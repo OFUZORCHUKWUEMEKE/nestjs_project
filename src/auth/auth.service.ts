@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose'
 import { User, UserSchema } from 'src/user/user.schema';
-import { Model } from 'mongoose'
+import mongoose, { Model, ObjectId } from 'mongoose'
 import { UserService } from 'src/user/user.service';
 import { UserRepository } from 'src/user/user.repository';
 import { CreateUser } from 'src/user/dto/create-user.dto';
@@ -11,35 +11,42 @@ import { JwtService } from '@nestjs/jwt/dist';
 import { ILOGIN } from './dto/auth.dto';
 @Injectable()
 export class AuthService {
-    constructor(private userRepository: UserRepository, private readonly userService: UserService, private configService: ConfigService, private jwtService: JwtService) {}
+    constructor(private userRepository: UserRepository, private readonly userService: UserService, private configService: ConfigService, private jwtService: JwtService) { }
 
     async Register(user: CreateUser) {
 
-        const email = await this.userRepository.findEmail(user.email)
+        try {
+            const email = await this.userRepository.findEmail(user.email)
 
-        const username = await this.userRepository.findUsername(user.username)
+            const username = await this.userRepository.findUsername(user.username)
 
-        if (email || username) throw new ConflictException('Username / Email Already Taken')
+            if (email || username) throw new ConflictException('Username / Email Already Taken')
 
-        const newUser = new User()
+            const newUser = new User()
 
-        const payload = { id: newUser._id, username: newUser.username, email: newUser.email }
+            const payload = { id: newUser._id, username: newUser.username, email: newUser.email }
 
-        const token = await this.jwtService.signAsync(payload)
+            const token = await this.jwtService.signAsync(payload)
 
 
-        const hashedPassword = await hashpass(user.password)
+            const hashedPassword = await hashpass(user.password)
 
-        newUser.email = user.email
-        newUser.lastName = user.lastName
-        newUser.firstName = user.firstName
-        newUser.phoneNumber = user.phoneNumber
-        newUser.profilePicture = user.profilePicture
-        newUser.username = user.username
-        newUser.password = hashedPassword
-        newUser.token = token
+            // newUser._id =  ObjectId()
+            newUser.email = user.email
+            newUser.lastName = user.lastName
+            newUser.firstName = user.firstName
+            newUser.phoneNumber = user.phoneNumber
+            newUser.profilePicture = user.profilePicture
+            newUser.username = user.username
+            newUser.password = hashedPassword
+            newUser.token = token
 
-        return await this.userService.createUser(newUser)
+            return await this.userService.createUser(newUser)
+        } catch (error) {
+            throw error
+        }
+
+
     }
 
     async Login({ email, password }: ILOGIN): Promise<any> {
@@ -60,7 +67,11 @@ export class AuthService {
 
         await isUser.save()
 
-        return token
+        // delete isUser.password
+
+        // await isUser.save()
+
+        return isUser
 
     }
 }

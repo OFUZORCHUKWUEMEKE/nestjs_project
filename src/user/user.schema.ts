@@ -11,8 +11,9 @@ export type UserDocument = User & Document;
 
 @Schema({timestamps:true})
 export class User {
-   @Prop({})
-   _id:Types.ObjectId
+//    [x: string]: typeof mongoose.Schema.Types.ObjectId;
+//    [x: string]: typeof mongoose.Schema.Types.ObjectId;
+   _id:any
 
    @Prop({required:true,unique:true})
    username:string

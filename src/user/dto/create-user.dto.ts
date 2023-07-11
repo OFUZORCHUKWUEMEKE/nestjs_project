@@ -29,6 +29,5 @@ export class CreateUser {
     @IsString()
     @IsOptional()
     phoneNumber?:number
-
     
 }
