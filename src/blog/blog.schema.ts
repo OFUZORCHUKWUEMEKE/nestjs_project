@@ -2,8 +2,12 @@ import mongoose, { Document, mongo } from "mongoose";
 import { Schema,Prop,SchemaFactory } from "@nestjs/mongoose";
 import { User } from "src/user/user.schema";
 
+
+export type BlogDocument = Blog & Document;
 @Schema()
-export class Blog extends Document{
+export class Blog{
+   _id?: any;
+
    @Prop({required:true})
    title:string
 
