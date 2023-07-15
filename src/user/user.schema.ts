@@ -42,7 +42,7 @@ export class User {
    @Prop({enum:UserType,default:UserType.REGULAR})
    userType:UserType
 
-   @Prop({type:[{type:mongoose.Schema.Types.ObjectId}],ref:'User',required:false})
+   @Prop({type:[{type:mongoose.Schema.Types.ObjectId}],ref:'Blog',required:false})
    blog:[Blog]
 
    @Prop({required:false})

@@ -1,19 +1,47 @@
 import { Injectable } from '@nestjs/common';
 import { Blog } from './blog.schema';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { IReq } from 'src/user/dto/req.user';
 import { CreateBlog } from './dto/create-blog';
+import { UserService } from 'src/user/user.service';
+import { UserRepository } from 'src/user/user.repository';
+import { User } from 'src/user/user.schema';
 
 @Injectable()
 export class BlogService {
-    constructor(@InjectModel('Blog') private blogModel: Model<Blog>) { }
+    constructor(@InjectModel('Blog') private blogModel: Model<Blog>, private readonly userService: UserService, private readonly userRepository: UserRepository) { }
 
     async getBlog() {
-       return await this.blogModel.find({})
+        return await this.blogModel.find({})
     }
 
-    async createBlog(user:IReq,credentials:CreateBlog){
-       
+    async createBlog(user: IReq, credentials: CreateBlog) {
+
+        let currentUser = await this.userRepository.findById(user.id)
+
+        console.log(credentials)
+
+        // return credentials
+
+        const blog = new Blog()
+
+
+        blog.user = currentUser
+        blog.content = credentials.content
+        blog.description = credentials.description
+        blog.title = credentials.title
+
+        let newBlog = await this.blogModel.create(blog)
+
+        // console.log(newBlog)
+
+        currentUser.blog.push(newBlog)
+
+        await currentUser.save()
+
+        // return (await this.userRepository.findById(currentUser._id)).populate('blog')
+        return await currentUser
+
     }
 }

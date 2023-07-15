@@ -14,12 +14,12 @@ export class UserService {
         return await this.userModel.create(user)
     }
 
-    async getUsers(): Promise<User[]> {
-        return await this.userModel.find({})
+    async getUsers(): Promise<any> {
+        return await this.userModel.find({}).populate('blog')
     }
 
     async getProfile(user: IReq): Promise<any> {
-        return await this.userModel.findById(user.id)
+        return (await this.userModel.findById(user.id)).populate('blog')
     }
 
     async editProfile(user: IReq, credentials: UpdateUser): Promise<any> {

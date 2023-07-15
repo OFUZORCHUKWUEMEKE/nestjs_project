@@ -38,7 +38,7 @@ export class UserController {
         try {
             return 'Its Working'
         } catch (error) {
-           
+
         }
     }
 }
