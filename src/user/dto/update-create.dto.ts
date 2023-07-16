@@ -1,31 +1,38 @@
 import { Exclude } from "class-transformer";
-import { IsString ,IsNotEmpty,IsOptional} from "class-validator";
-
-export class UpdateUser{
+import { IsString, IsNotEmpty, IsOptional } from "class-validator";
+import { ApiPropertyOptional } from "@nestjs/swagger";
+export class UpdateUser {
+    @ApiPropertyOptional()
     @IsString()
     @IsNotEmpty()
     @IsOptional()
-    username?:string;
+    username?: string;
 
+    @ApiPropertyOptional()
     @IsString()
     @IsNotEmpty()
     @IsOptional()
-    firstName?:string
+    firstName?: string
 
+
+    @ApiPropertyOptional()
     @IsString()
     @IsNotEmpty()
     @IsOptional()
-    lastName?:string
+    lastName?: string
 
+    @ApiPropertyOptional()
     @IsString()
     @IsOptional()
-    profilePicture?:string
+    profilePicture?: string
 
+    @ApiPropertyOptional()
     @IsString()
     @IsOptional()
-    phoneNumber?:number
+    phoneNumber?: number
 
+    @ApiPropertyOptional()
     @IsString()
     @IsOptional()
-    bio?:string
+    bio?: string
 }

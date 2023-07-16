@@ -30,8 +30,8 @@ export class BaseRepository<T extends Document> {
     async findEmail(email: string): Promise<T> {
         return await this.model.findOne({ email })
     }
-    async findUsername(username):Promise<T>{
-        return await this.model.findOne({username})
+    async findUsername(username): Promise<T> {
+        return await this.model.findOne({ username })
     }
 
 }

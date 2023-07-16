@@ -1,35 +1,44 @@
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Exclude } from "class-transformer";
-import { IsString ,IsNotEmpty,IsOptional} from "class-validator";
+import { IsString, IsNotEmpty, IsOptional } from "class-validator";
 
 
 export class CreateUser {
+
+    @ApiProperty({ required: true })
     @IsString()
     @IsNotEmpty()
-    username:string;
+    username: string;
 
+    @ApiProperty({ required: true })
     @IsString()
     @IsNotEmpty()
-    firstName:string
+    firstName: string
 
+    @ApiProperty({ required: true })
     @IsString()
     @IsNotEmpty()
-    lastName:string
+    lastName: string
 
+    @ApiProperty({ required: true })
     @IsString()
     @IsNotEmpty()
-    email:string
+    email: string
 
+    @ApiProperty({ required: true })
     @IsString()
     @IsNotEmpty()
-    // @Exclude()
-    password:string
+    @Exclude()
+    password: string
 
+    @ApiPropertyOptional()
     @IsString()
     @IsOptional()
-    profilePicture?:string
+    profilePicture?: string
 
+    @ApiPropertyOptional()
     @IsString()
     @IsOptional()
-    phoneNumber?:number
-    
+    phoneNumber?: number
+
 }

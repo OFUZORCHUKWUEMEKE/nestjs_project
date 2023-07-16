@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
 import { Blog } from './blog.schema';
 import mongoose, { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -13,7 +13,7 @@ export class BlogService {
     constructor(@InjectModel('Blog') private blogModel: Model<Blog>, private readonly userService: UserService, private readonly userRepository: UserRepository) { }
 
     async getBlog() {
-        return await this.blogModel.find({})
+        return await this.blogModel.find({}).populate('user')
     }
 
     async createBlog(user: IReq, credentials: CreateBlog) {
@@ -43,5 +43,11 @@ export class BlogService {
         // return (await this.userRepository.findById(currentUser._id)).populate('blog')
         return await currentUser
 
+    }
+
+    async deleteBlog(id: string, user: IReq) {
+        if (id !== user.id) throw new HttpException('Not Authourized', 403)
+        await this.blogModel.findOneAndDelete({ _id: id })
+        return 'Successfully Deleted Model'
     }
 }
