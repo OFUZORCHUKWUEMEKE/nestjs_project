@@ -17,6 +17,12 @@ export class Blog{
    @Prop({required:true})
    content:string
 
+   @Prop({required:false})
+   cover_image:string
+
+   @Prop({required:false})
+   url_image:string
+
    @Prop({required:true,ref:'User',type:mongoose.Schema.Types.ObjectId})
    user:User
 

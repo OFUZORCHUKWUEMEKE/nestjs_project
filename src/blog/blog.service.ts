@@ -1,4 +1,4 @@
-import { Injectable, HttpException } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { Blog } from './blog.schema';
 import mongoose, { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -16,32 +16,41 @@ export class BlogService {
         return await this.blogModel.find({}).populate('user')
     }
 
-    async createBlog(user: IReq, credentials: CreateBlog) {
+    async createBlog(user: IReq, credentials: CreateBlog, file) {
 
-        let currentUser = await this.userRepository.findById(user.id)
+        try {
+            console.log(file)
 
-        console.log(credentials)
+            let currentUser = await this.userRepository.findById(user.id)
 
-        // return credentials
+            console.log(credentials)
 
-        const blog = new Blog()
+            // return credentials
+
+            const blog = new Blog()
 
 
-        blog.user = currentUser
-        blog.content = credentials.content
-        blog.description = credentials.description
-        blog.title = credentials.title
+            blog.user = currentUser
+            blog.content = credentials.content
+            blog.description = credentials.description
+            blog.title = credentials.title
 
-        let newBlog = await this.blogModel.create(blog)
+            let newBlog = await this.blogModel.create(blog)
 
-        // console.log(newBlog)
+            // console.log(newBlog)
 
-        currentUser.blog.push(newBlog)
+            currentUser.blog.push(newBlog)
 
-        await currentUser.save()
+            await currentUser.save()
+
+            return await currentUser
+
+        } catch (error) {
+            throw new HttpException(error, HttpStatus.BAD_REQUEST)
+        }
+
 
         // return (await this.userRepository.findById(currentUser._id)).populate('blog')
-        return await currentUser
 
     }
 

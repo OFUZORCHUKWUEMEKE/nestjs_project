@@ -28,7 +28,7 @@ export class CreateUser {
     @ApiProperty({ required: true })
     @IsString()
     @IsNotEmpty()
-    @Exclude()
+    // @Exclude()
     password: string
 
     @ApiPropertyOptional()

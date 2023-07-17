@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose'
 import { User, UserSchema } from 'src/user/user.schema';
 import mongoose, { Model, ObjectId } from 'mongoose'
@@ -31,7 +31,6 @@ export class AuthService {
 
             const hashedPassword = await hashpass(user.password)
 
-            // newUser._id =  ObjectId()
             newUser.email = user.email
             newUser.lastName = user.lastName
             newUser.firstName = user.firstName
@@ -43,7 +42,8 @@ export class AuthService {
 
             return await this.userService.createUser(newUser)
         } catch (error) {
-            throw error
+            throw new HttpException(error.response, error.response.statusCode,{description:error.response.message})
+            // console.log(error.response)
         }
 
 
@@ -53,19 +53,21 @@ export class AuthService {
 
         const isUser = await this.userRepository.findEmail(email)
 
-        if (!isUser) throw new ConflictException('Invalid User Credentials')
+        console.log({email,password})
 
-        const correctPassword = comparePassword(password, isUser.password)
+        // if (!isUser) throw new ConflictException('Invalid User Credentials')
 
-        if (!correctPassword) throw new ConflictException('Invalid User Credentials')
+        // const correctPassword = comparePassword(password, isUser.password)
 
-        const payload = { id: isUser._id, username: isUser.username, email: isUser.email }
+        // if (!correctPassword) throw new ConflictException('Invalid User Credentials')
 
-        const token = await this.jwtService.signAsync(payload)
+        // const payload = { id: isUser._id, username: isUser.username, email: isUser.email }
 
-        isUser.token = token
+        // const token = await this.jwtService.signAsync(payload)
 
-        await isUser.save()
+        // isUser.token = token
+
+        // await isUser.save()
 
         // delete isUser.password
 
