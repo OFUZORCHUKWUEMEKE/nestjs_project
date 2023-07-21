@@ -44,7 +44,8 @@ export class UserController {
         try {
             return 'Its Working'
         } catch (error) {
-            throw new HttpException('Not Authourised', 403)
+            // throw new HttpException('Not Authourised', 403)
+            return 'not working'
         }
     }
 
@@ -65,6 +66,5 @@ export class UserController {
                 files: fileString.url
             }
         }
-
     }
 }
