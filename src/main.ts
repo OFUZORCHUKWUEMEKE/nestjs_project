@@ -3,6 +3,8 @@ import { AppModule } from './app.module';
 import configuration from './config/config'
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { HttpExceptionFilter } from './shared/filters/http-exception.filter';
+import { ModelExceptionFilter } from './shared/filters/model-exception.filter';
 
 const configs = configuration()
 
@@ -16,6 +18,7 @@ async function bootstrap() {
     whitelist: true
   }))
 
+  app.useGlobalFilters(new HttpExceptionFilter(), new ModelExceptionFilter());
   const config = new DocumentBuilder()
     .setTitle('Personal Blog Project')
     .setDescription('A personal Blog Project Built With Nestjs')

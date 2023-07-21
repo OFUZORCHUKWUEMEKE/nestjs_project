@@ -19,7 +19,7 @@ export class UserService {
     }
 
     async getProfile(user: IReq): Promise<any> {
-        return (await this.userModel.findById(user.id)).populate('blog')
+        return (await this.userModel.findById(user.id))
     }
 
     async editProfile(user: IReq, credentials: UpdateUser): Promise<any> {
