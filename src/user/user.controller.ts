@@ -10,6 +10,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Express } from "express";
 import { CloudinaryService } from "src/cloudinary/cloudinary.service";
+import { RolesGuard } from "./guards/user.guard";
 // import { error } from "console";
 
 @ApiTags('User')
@@ -37,8 +38,8 @@ export class UserController {
     }
 
     @Delete('/delete')
-    @UseGuards(AuthGuard)
-    @Roles('admin')
+    @UseGuards(AuthGuard,RolesGuard)
+    // @Roles('admin')
     async deleteUser(@Param('id') id: string) {
         try {
             return 'Its Working'
@@ -50,7 +51,7 @@ export class UserController {
     @Post('upload')
     @UseInterceptors(FileInterceptor('file'))
     async uploadFile(@UploadedFile() file, @Body() body) {
-        // console.log(file)
+        console.log(file)
         if (!file) {
             return {
                 ...body,

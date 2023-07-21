@@ -1,11 +1,11 @@
-import { Controller, Post, UseGuards, Get, Body, Delete, Param, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Post, UseGuards, Get, Body, Delete, Param, UseInterceptors, UploadedFile, UploadedFiles, Req } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { User } from 'src/user/decorators/user.decorator';
 import { IReq } from 'src/user/dto/req.user';
 import { CreateBlog } from './dto/create-blog';
 import { ApiTags } from '@nestjs/swagger';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Blog')
 @Controller('blogs')
@@ -17,10 +17,17 @@ export class BlogController {
     }
 
     @Post('/')
+    @UseInterceptors(FileFieldsInterceptor([{
+        name: 'url_image',
+        maxCount: 1
+    }, {
+        name: 'cover_image',
+        maxCount: 1
+    }]))
     @UseGuards(AuthGuard)
-    @UseInterceptors(FileInterceptor('file'))
-    async createBlog(@User() user: IReq, @Body() credentials: CreateBlog, @UploadedFile() file) {
-        return await this.blogService.createBlog(user, credentials, file)
+    async createBlog(@User() user: IReq, @Body() credentials: CreateBlog, @UploadedFiles() files, @Req() req) {
+        console.log(req.user)
+        return await this.blogService.createBlog(user, credentials, files)
     }
 
     @Delete(':id')

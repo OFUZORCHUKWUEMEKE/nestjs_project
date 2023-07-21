@@ -55,23 +55,23 @@ export class AuthService {
 
         console.log({email,password})
 
-        // if (!isUser) throw new ConflictException('Invalid User Credentials')
+        if (!isUser) throw new ConflictException('Invalid User Credentials')
 
-        // const correctPassword = comparePassword(password, isUser.password)
+        const correctPassword = comparePassword(password, isUser.password)
 
-        // if (!correctPassword) throw new ConflictException('Invalid User Credentials')
+        if (!correctPassword) throw new ConflictException('Invalid User Credentials')
 
-        // const payload = { id: isUser._id, username: isUser.username, email: isUser.email }
+        const payload = { id: isUser._id, username: isUser.username, email: isUser.email }
 
-        // const token = await this.jwtService.signAsync(payload)
+        const token = await this.jwtService.signAsync(payload)
 
-        // isUser.token = token
+        isUser.token = token
 
-        // await isUser.save()
+        await isUser.save()
 
-        // delete isUser.password
+        delete isUser.password
 
-        // await isUser.save()
+        await isUser.save()
 
         return isUser
 

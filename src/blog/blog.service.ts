@@ -7,50 +7,53 @@ import { CreateBlog } from './dto/create-blog';
 import { UserService } from 'src/user/user.service';
 import { UserRepository } from 'src/user/user.repository';
 import { User } from 'src/user/user.schema';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class BlogService {
-    constructor(@InjectModel('Blog') private blogModel: Model<Blog>, private readonly userService: UserService, private readonly userRepository: UserRepository) { }
+    constructor(@InjectModel('Blog') private blogModel: Model<Blog>, private readonly userService: UserService, private readonly userRepository: UserRepository, private cloudinary: CloudinaryService) { }
 
     async getBlog() {
         return await this.blogModel.find({}).populate('user')
     }
 
     async createBlog(user: IReq, credentials: CreateBlog, file) {
+        const { cover_image, url_image } = file
 
         try {
-            console.log(file)
 
             let currentUser = await this.userRepository.findById(user.id)
 
-            console.log(credentials)
-
-            // return credentials
-
             const blog = new Blog()
-
 
             blog.user = currentUser
             blog.content = credentials.content
             blog.description = credentials.description
             blog.title = credentials.title
 
+            if (cover_image) {
+                const cover_image_url = await this.cloudinary.uploadImage(cover_image[0])
+                blog.cover_image = cover_image_url.url
+            }
+            if (url_image) {
+                const url_image_URL = await this.cloudinary.uploadImage(url_image)
+                blog.url_image = url_image_URL.url
+            }
+
+            console.log(blog)
+
             let newBlog = await this.blogModel.create(blog)
 
-            // console.log(newBlog)
 
             currentUser.blog.push(newBlog)
 
             await currentUser.save()
 
-            return await currentUser
+            return currentUser
 
         } catch (error) {
-            throw new HttpException(error, HttpStatus.BAD_REQUEST)
+            throw new HttpException(error.response, HttpStatus.BAD_REQUEST)
         }
-
-
-        // return (await this.userRepository.findById(currentUser._id)).populate('blog')
 
     }
 
