@@ -6,6 +6,8 @@ import { IReq } from 'src/user/dto/req.user';
 import { CreateBlog } from './dto/create-blog';
 import { ApiTags } from '@nestjs/swagger';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
+import { UserType } from 'src/user/user.schema';
+import { Roles } from 'src/user/decorators/roles.decorator';
 
 @ApiTags('Blog')
 @Controller('blogs')
@@ -31,7 +33,8 @@ export class BlogController {
     }
 
     @Delete(':id')
-    @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard)  
+    @Roles(UserType.REGULAR)
     async deleteBlog(@Param('id') id: string, @User() user: IReq) {
         return this.blogService.deleteBlog(id, user)
     }

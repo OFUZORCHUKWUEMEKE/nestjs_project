@@ -4,34 +4,40 @@ import { IReq } from '../dto/req.user';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../user.schema';
 import { Model } from 'mongoose';
+import { Request } from 'express';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-    constructor(private reflector: Reflector, @InjectModel('User') private userModel: Model<User>) { }
+    constructor(private reflector: Reflector, @InjectModel('User') private userModel: Model<User>, private jwtService: JwtService, private configService: ConfigService) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
 
         const roles = this.reflector.get<string[]>('roles', context.getHandler());
 
-        // console.log('dating')
+        console.log(roles)
         if (!roles) {
             return true;
         }
-        const request = context.switchToHttp().getRequest();
+        let request = context.switchToHttp().getRequest();
 
-        const user: IReq = request.user;
+        const user = await this.extractTokenFromHeader(request)
 
-        const currentUser = await this.userModel.findById(user.id)
+        request.user = user
 
-        const there = roles.includes(currentUser.userType)
-
-        console.log(there)
+        const currentUser = await this.userModel.findOne({ _id: user.id })
 
         if (roles.includes(currentUser.userType)) {
             return true
         } else {
-            throw new NotAcceptableException()
+            throw new NotAcceptableException('Not Authourise to Perform such action')
         }
-        // return matchRoles(roles, user.roles);
+    }
+
+    async extractTokenFromHeader(request) {
+        const token = request.headers.authorization.split(' ')[1]
+        const payload = await this.jwtService.verifyAsync(token, { secret: this.configService.get<string>('JWT_SECRET') })
+        return payload
     }
 }
