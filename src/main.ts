@@ -19,6 +19,7 @@ async function bootstrap() {
   }))
 
   app.useGlobalFilters(new HttpExceptionFilter(), new ModelExceptionFilter());
+  
   const config = new DocumentBuilder()
     .setTitle('Personal Blog Project')
     .setDescription('A personal Blog Project Built With Nestjs')

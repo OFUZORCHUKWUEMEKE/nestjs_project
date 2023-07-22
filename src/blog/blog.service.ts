@@ -35,10 +35,10 @@ export class BlogService {
                 const cover_image_url = await this.cloudinary.uploadImage(cover_image[0])
                 blog.cover_image = cover_image_url.url
             }
-            if (url_image) {
-                const url_image_URL = await this.cloudinary.uploadImage(url_image)
-                blog.url_image = url_image_URL.url
-            }
+            // if (url_image) {
+            //     const url_image_URL = await this.cloudinary.uploadImage(url_image)
+            //     blog.url_image = url_image_URL.url
+            // }
 
             console.log(blog)
 
@@ -49,7 +49,7 @@ export class BlogService {
 
             await currentUser.save()
 
-            return currentUser
+            return newBlog
 
         } catch (error) {
             throw new HttpException(error.response, HttpStatus.BAD_REQUEST)
@@ -58,8 +58,12 @@ export class BlogService {
     }
 
     async deleteBlog(id: string, user: IReq) {
-        if (id !== user.id) throw new HttpException('Not Authourized', 403)
-        await this.blogModel.findOneAndDelete({ _id: id })
-        return 'Successfully Deleted Model'
+        // if (id !== user.id) throw new HttpException('Not Authourized', 403)
+        // await this.blogModel.findOneAndDelete({ _id: id })
+        // return 'Successfully Deleted Model'
+        return {
+            id,
+            user_id:user.id
+        }
     }
 }
