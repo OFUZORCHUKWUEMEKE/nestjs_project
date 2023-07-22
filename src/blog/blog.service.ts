@@ -45,7 +45,7 @@ export class BlogService {
             let newBlog = await this.blogModel.create(blog)
 
 
-            currentUser.blog.push(newBlog)
+            currentUser.blog.push(newBlog._id)
 
             await currentUser.save()
 
@@ -54,16 +54,17 @@ export class BlogService {
         } catch (error) {
             throw new HttpException(error.response, HttpStatus.BAD_REQUEST)
         }
-
     }
 
     async deleteBlog(id: string, user: IReq) {
-        // if (id !== user.id) throw new HttpException('Not Authourized', 403)
-        // await this.blogModel.findOneAndDelete({ _id: id })
-        // return 'Successfully Deleted Model'
-        return {
-            id,
-            user_id:user.id
-        }
+      
+        const blog = await this.blogModel.findOne({_id:id}).populate('user')
+
+        if (blog.user._id.toString() !== user.id) throw new HttpException('Not Authourized', 403)
+        // console.log()
+        await this.blogModel.findOneAndDelete({ _id: id })
+
+        return 'Successfully Deleted'
+   
     }
-}
+}    
