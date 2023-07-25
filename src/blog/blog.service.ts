@@ -8,6 +8,7 @@ import { UserService } from 'src/user/user.service';
 import { UserRepository } from 'src/user/user.repository';
 import { User } from 'src/user/user.schema';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { UpdateBlogDto } from './dto/update-blog';
 
 @Injectable()
 export class BlogService {
@@ -57,14 +58,18 @@ export class BlogService {
     }
 
     async deleteBlog(id: string, user: IReq) {
-      
-        const blog = await this.blogModel.findOne({_id:id}).populate('user')
+
+        const blog = await this.blogModel.findOne({ _id: id }).populate('user')
 
         if (blog.user._id.toString() !== user.id) throw new HttpException('Not Authourized', 403)
         // console.log()
         await this.blogModel.findOneAndDelete({ _id: id })
 
         return 'Successfully Deleted'
-   
+
+    }
+
+    async updateBlog(user: IReq, data: UpdateBlogDto) {
+        return await this.blogModel.findByIdAndUpdate(user.id, data)
     }
 }    

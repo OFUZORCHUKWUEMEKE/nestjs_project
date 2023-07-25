@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, Get, Body, Delete, Param, UseInterceptors, UploadedFile, UploadedFiles, Req } from '@nestjs/common';
+import { Controller, Post, UseGuards, Get, Body, Delete, Param, UseInterceptors, UploadedFile, UploadedFiles, Req, Put } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { Userr } from 'src/user/decorators/user.decorator';
@@ -8,6 +8,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { UserType } from 'src/user/user.schema';
 import { Roles } from 'src/user/decorators/roles.decorator';
+import { UpdateBlogDto } from './dto/update-blog';
 
 @ApiTags('Blog')
 @Controller('blogs')
@@ -33,9 +34,16 @@ export class BlogController {
     }
 
     @Delete(':id')
-    @UseGuards(AuthGuard)  
+    @UseGuards(AuthGuard)
     @Roles(UserType.REGULAR)
     async deleteBlog(@Param('id') id: string, @Userr() user: IReq) {
         return this.blogService.deleteBlog(id, user)
+    }
+
+
+    @Put('/update')
+    @UseGuards(AuthGuard)
+    async updateBlog(@Userr() user:IReq,@Body() body:UpdateBlogDto) {
+        return this.blogService.updateBlog(user,body)
     }
 }
