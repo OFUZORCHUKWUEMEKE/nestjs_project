@@ -40,7 +40,6 @@ export class BlogController {
         return this.blogService.deleteBlog(id, user)
     }
 
-
     @Put('/update')
     @UseGuards(AuthGuard)
     async updateBlog(@Userr() user:IReq,@Body() body:UpdateBlogDto) {
