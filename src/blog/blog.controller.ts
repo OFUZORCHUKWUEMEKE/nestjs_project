@@ -1,7 +1,7 @@
 import { Controller, Post, UseGuards, Get, Body, Delete, Param, UseInterceptors, UploadedFile, UploadedFiles, Req } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { User } from 'src/user/decorators/user.decorator';
+import { Userr } from 'src/user/decorators/user.decorator';
 import { IReq } from 'src/user/dto/req.user';
 import { CreateBlog } from './dto/create-blog';
 import { ApiTags } from '@nestjs/swagger';
@@ -27,7 +27,7 @@ export class BlogController {
         maxCount: 1
     }]))
     @UseGuards(AuthGuard)
-    async createBlog(@User() user: IReq, @Body() credentials: CreateBlog, @UploadedFiles() files, @Req() req) {
+    async createBlog(@Userr() user: IReq, @Body() credentials: CreateBlog, @UploadedFiles() files, @Req() req) {
         console.log(req.user)
         return await this.blogService.createBlog(user, credentials, files)
     }
@@ -35,7 +35,7 @@ export class BlogController {
     @Delete(':id')
     @UseGuards(AuthGuard)  
     @Roles(UserType.REGULAR)
-    async deleteBlog(@Param('id') id: string, @User() user: IReq) {
+    async deleteBlog(@Param('id') id: string, @Userr() user: IReq) {
         return this.blogService.deleteBlog(id, user)
     }
 }

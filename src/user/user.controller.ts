@@ -1,7 +1,7 @@
 import { Controller, Get, Post, UseGuards, Req, Put, Body, Delete, Param, HttpException, UseInterceptors, UploadedFile, ParseFilePipe, BadRequestException } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { AuthGuard } from "src/auth/guards/auth.guard";
-import { User } from "./decorators/user.decorator";
+import { Userr } from "./decorators/user.decorator";
 import { Request } from "express";
 import { IReq } from "./dto/req.user";
 import { UpdateUser } from "./dto/update-create.dto";
@@ -11,12 +11,15 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { Express } from "express";
 import { CloudinaryService } from "src/cloudinary/cloudinary.service";
 import { RolesGuard } from "./guards/user.guard";
+import { InjectModel } from "@nestjs/mongoose";
+import { User } from "./user.schema";
+import { Model } from "mongoose";
 // import { error } from "console";
 
 @ApiTags('User')
 @Controller('users')
 export class UserController {
-    constructor(private readonly userService: UserService, private cloudinaryService: CloudinaryService) { }
+    constructor(private readonly userService: UserService, private cloudinaryService: CloudinaryService , @InjectModel('User') private readonly userModel:Model<User>) { }
     @Get('/')
     async getUsers() {
         return this.userService.getUsers()
@@ -24,7 +27,7 @@ export class UserController {
 
     @Get('/profile')
     @UseGuards(AuthGuard)
-    async getProfile(@User() user: IReq) {
+    async getProfile(@Userr() user: IReq) {
         let currentUser = await this.userService.getProfile(user)
         // const {password,...others} = currentUser
         // await delete currentUser.password
@@ -33,16 +36,16 @@ export class UserController {
 
     @Put('/edit/profile')
     @UseGuards(AuthGuard)
-    async editProfile(@User() user, @Body() credentials: UpdateUser) {
+    async editProfile(@Userr() user, @Body() credentials: UpdateUser) {
         return await this.userService.editProfile(user, credentials)
     }
 
     @Delete('/delete')
-    @UseGuards(AuthGuard,RolesGuard)
-    // @Roles('admin')
-    async deleteUser(@Param('id') id: string) {
+    @UseGuards(AuthGuard)
+    @Roles('admin')    
+    async deleteUser(@Param('id') id: string) {  
         try {
-            return 'Its Working'
+            return this.userModel.findByIdAndDelete(id)
         } catch (error) {
             // throw new HttpException('Not Authourised', 403)
             return 'not working'
